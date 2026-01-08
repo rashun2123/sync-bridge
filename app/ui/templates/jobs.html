@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="panel">
+    <div class="actions">
+      <form method="post" action="/ui/jobs/enqueue" class="actions">
+        <input class="input" name="entity_id" placeholder="CRM customer id (e.g. c_1001)" />
+        <button class="btn" type="submit">Enqueue Customer Sync</button>
+      </form>
+      <a class="btn" href="/ui/jobs">All</a>
+      <a class="btn" href="/ui/jobs?status=dead">Dead</a>
+      <a class="btn" href="/ui/jobs{% if status_filter %}?status={{ status_filter }}{% endif %}">Refresh</a>
+      <span class="muted">Enqueue runs CRM -> Billing customer upsert.</span>
+    </div>
+  </div>
+
+  <div style="height: 12px"></div>
+
+  <div class="panel">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>Type</th>
+          <th>Entity</th>
+          <th>Attempts</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for job in jobs %}
+        <tr>
+          <td class="mono"><a href="/ui/jobs/{{ job.id }}">{{ job.id }}</a></td>
+          <td>
+            <span class="badge {{ job.status.value }}">{{ job.status.value }}</span>
+          </td>
+          <td class="mono">{{ job.job_type }}</td>
+          <td class="mono">{{ job.entity_type }}:{{ job.entity_id }}</td>
+          <td class="mono">{{ job.attempt_count }}/{{ job.max_retries }}</td>
+          <td class="mono">{{ job.updated_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

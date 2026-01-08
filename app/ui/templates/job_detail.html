@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="panel stack">
+    <div>
+      <div class="muted">Job</div>
+      <div class="mono" style="font-size: 18px">#{{ job.id }} — {{ job.job_type }}</div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="muted">Status</div>
+        <div><span class="badge {{ job.status.value }}">{{ job.status.value }}</span></div>
+      </div>
+      <div>
+        <div class="muted">Entity</div>
+        <div class="mono">{{ job.entity_type }}:{{ job.entity_id }}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="muted">Source / Target</div>
+        <div class="mono">{{ job.source_system }} -> {{ job.target_system }}</div>
+      </div>
+      <div>
+        <div class="muted">Attempts</div>
+        <div class="mono">{{ job.attempt_count }} / {{ job.max_retries }}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="muted">Created</div>
+        <div class="mono">{{ job.created_at }}</div>
+      </div>
+      <div>
+        <div class="muted">Updated</div>
+        <div class="mono">{{ job.updated_at }}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="muted">Next run</div>
+        <div class="mono">{{ job.next_run_at if job.next_run_at else "-" }}</div>
+      </div>
+      <div>
+        <div class="muted">Last error</div>
+        <div class="mono">{{ job.last_error if job.last_error else "-" }}</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <div class="muted">Correlation</div>
+        <div class="mono">{{ job.correlation_id if job.correlation_id else "-" }}</div>
+      </div>
+      <div>
+        <div class="muted">Last run</div>
+        <div class="mono">
+          {{ job.last_duration_ms if job.last_duration_ms else "-" }}
+          {% if job.last_error_type %} ({{ job.last_error_type }}){% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div>
+      <div class="muted">Attempts</div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Success</th>
+            <th>Started</th>
+            <th>Finished</th>
+            <th>Error</th>
+            <th>Type</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in attempts %}
+          <tr>
+            <td class="mono">{{ a.attempt_number }}</td>
+            <td>
+              {% if a.success %}
+                <span class="badge good">true</span>
+              {% else %}
+                <span class="badge bad">false</span>
+              {% endif %}
+            </td>
+            <td class="mono">{{ a.started_at }}</td>
+            <td class="mono">{{ a.finished_at if a.finished_at else "-" }}</td>
+            <td class="mono">{{ a.error_summary if a.error_summary else "-" }}</td>
+            <td class="mono">{{ a.error_type if a.error_type else "-" }}</td>
+            <td class="mono">{{ a.duration_ms if a.duration_ms else "-" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <a class="btn" href="/ui/jobs">Back</a>
+      <a class="btn" href="/ui/jobs/{{ job.id }}">Refresh</a>
+
+      {% if job.status.value in ["pending", "running"] %}
+        <form method="post" action="/ui/jobs/{{ job.id }}/cancel">
+          <button class="btn" type="submit">Cancel</button>
+        </form>
+      {% endif %}
+
+      {% if job.status.value == "failed" %}
+        <form method="post" action="/ui/jobs/{{ job.id }}/retry">
+          <button class="btn" type="submit">Retry</button>
+        </form>
+        <form method="post" action="/ui/jobs/{{ job.id }}/replay">
+          <button class="btn" type="submit">Replay</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
