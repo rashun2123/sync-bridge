@@ -97,33 +97,35 @@ Each job has a `correlation_id` propagated to integration clients via `X-Correla
 
 ### 01-api-docs.png
 FastAPI OpenAPI docs showing job, control, and metrics endpoints.
+![API Docs](docs/screenshots/01-api-docs.png)
 
 ### 02-enqueue-job-response.png
 Enqueueing a job via HTTP and receiving a durable job record.
+![API Docs](docs/screenshots/02-enqueue-job-response.png)
 
 ### 03-ui-job-list.png
 Admin UI showing multiple jobs with different states.
+![API Docs](docs/screenshots/03-ui-job-list.png)
 
 ### 04-ui-job-detail-attempts.png
 Single job detail page with full attempt history and error types.
+![API Docs](docs/screenshots/04-ui-job-detail-attempts.png)
 
 ### 05-retryable-failure-logs.png
 Terminal logs showing retryable failures and retries.
-
-### 06-backoff-next-run.png
-Job scheduled with future `next_run_at` after a failure.
+![API Docs](docs/screenshots/05-retryable-failure-logs.png)
 
 ### 07-dlq-dead-job.png
 Job marked `dead` after exceeding retry budget.
+![API Docs](docs/screenshots/07-dlq-dead-job.png)
 
-### 08-cancel-job.png
-Canceling a pending or running job via control endpoint.
-
-### 09-replay-creates-new-job.png
+### 10-replay-creates-new-job.png
 Replay operation creating a new job linked to the failed one.
+![API Docs](docs/screenshots/10-replay-creates-new-job.png)
 
-### 10-metrics-endpoint.png
+### 11-metrics-endpoint.png
 Metrics endpoint returning job counts and success rate.
+![API Docs](docs/screenshots/11-metrics-endpoint.png)
 
 ## Quickstart
 
